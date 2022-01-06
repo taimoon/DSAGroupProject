@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 int main(void){
-    print("Hey, Teng Man here. FUCK U MAN.")
+    printf("Hey, Teng Man here.");
+
     return 0;
 }
