@@ -21,6 +21,9 @@
 		</Compiler>
 		<Unit filename="Cir_List.h" />
 		<Unit filename="Forward_List.h" />
+		<Unit filename="driver.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="warehouseSystem.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>

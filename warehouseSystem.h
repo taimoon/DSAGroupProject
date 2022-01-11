@@ -16,8 +16,5 @@ typedef struct request{
     char direction;
     product *List;
 }request;
-typedef struct
-
-
 
 #endif // WAREHOUSESYSTEM_H_INCLUDED
