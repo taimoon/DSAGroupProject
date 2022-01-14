@@ -101,7 +101,7 @@ ArrT popBackArr(array *stack){
     shrinkArray(stack);
     return top;
 }
-void enqueue(ArrT data, array *q){
+void enqueueArr(ArrT data, array *q){
     pushBackArr(data, q);
 }
 ArrT arrayPopFront(array *q){

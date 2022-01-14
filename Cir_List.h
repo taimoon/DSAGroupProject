@@ -2,22 +2,17 @@
 #define CIR_LIST_H_INCLUDED
 #include <stdlib.h>
 #include<stdio.h>
-typedef int T;
-void printFunc(T val){
-    printf("%d", val);
-}
-
 struct node{
-    T val;//you may change the T type and change the parameter of functions below accordingly
+    T val;
     struct node* next;
     struct node* back;
 };
+typedef struct request T;
 typedef struct node node;
 typedef struct node* nodePtr;
-int getLen(node *li); //optional but easy
+int getLen(node *li);
 node* getNode(node *li, int pos);
 node* getEndNode(node *li);///trivial for circular double linked list
-void printNode(node *li);
 void pushFront(node **li, T val);
 void pushBack(node **li, T val);
 T popFront(node **li);//you may change the T to void so that it doesn't return anything
@@ -25,7 +20,7 @@ T popBack(node **li);//you may change the T to void so that it doesn't return an
 void insertion(node **li, int pos, T val);
 void insertionAfter(node **li, int pos, T val); //optional
 void deletion(node **li, int pos);
-
+void destoryList(node **li);
 
 int getLen(node *li){
     node *curr = li;
@@ -64,25 +59,6 @@ node* getEndNode(node *li){
         return NULL;
     return li->back;
 };
-void printNode(node *li){
-    node *curr = li;
-    if(li == NULL)
-        return;
-    do{
-        printFunc(curr->val);printf(" ");
-        curr = curr->next;
-    }while(curr != li);
-}
-void printNodeBack(node *li){
-    if(li == NULL)
-        return;
-    node *curr  = li->back;
-    do{
-        printFunc(curr->val);printf(" ");
-        curr = curr->back;
-    }while(curr != li->back);
-
-}
 void pushFront(node **li, T val){
     node *newNode = (node *)malloc(sizeof(struct node));
     newNode->val = val;
@@ -215,5 +191,9 @@ void deletion(node **li, int pos){
         curr->next->back = prev;
         free(curr);
     }
+}
+void destoryList(node **li){
+    while(*li != NULL)
+        popFront(li);
 }
 #endif // CIR_LIST_H_INCLUDED

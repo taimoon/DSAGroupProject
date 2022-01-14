@@ -51,7 +51,17 @@ typedef struct request{
     float totalPrice;
     address target;
 }request;
-
+//Define queue structure from circular list after including the circular list
+typedef request T;
+#include "Cir_List.h"
+void enqueue(node** queue, request instance)
+{
+    pushBack(queue, instance);
+}
+request dequeue(node ** queue)
+{
+    return popFront(queue);
+}
 product RegisterNewProduct();
 int AppendRegisteredProduct();
 request InputNewRequest();
@@ -68,6 +78,8 @@ void FileLoadSeq(char *filename, void* seq, size_t elemSize);
 void FileSaveSeq(char *filename, int length, void *seq, size_t elemSize);
 void SaveProduct(product *arr, size_t length);
 int LoadProduct(product **arr);
+void LoadRequest(node** instance);
+void SaveRequest(node** instance);
 
 product RegisterNewProduct()
 {
@@ -108,7 +120,7 @@ request InputNewRequest()
     newrequest.requestList=array_init;
     newrequest.direction = OUTBOUND;
     input("Enter the orderID of the request: ", "%u", &newrequest.orderID);
-    input("Enter the receiver name of the request: ", "%[^\n]", newrequest.receiver);
+    input("Enter the receiver name of the request: ", "%[^\n]s", newrequest.receiver);
     input("Enter the direction of request(0=Outbound/1=INBOUND): ", "%c", &newrequest.direction);
     input("Enter the date of request(DD/MM/YY): ", "%s", newrequest.requestDate);
     InputRequestList(&newrequest.requestList);
@@ -152,7 +164,7 @@ void InputRequestList(array *CurrList)
         }
         else
             printf("The barcode is not recorded in the system\n");
-        input("Enter 1 if you wish to continue, or enter any key otherwise", "%d", &UserInput);
+        input("Enter 1 if you wish to continue, or enter any key otherwise: ", "%d", &UserInput);
     }
 }
 void PrintProduct(product product_info)
@@ -263,5 +275,48 @@ void SaveProduct(product *arr, size_t length)
     FileInit(filename);
     FileSaveSeq(filename, length, arr, sizeof(product));
 }
-int LoadRequest
+void SaveRequest(node** instance)
+{
+    char filename[]="Request List.bin";
+    FileInit(filename);
+    FILE *fp;
+    fp = fopen(filename,"wb");
+    node* curr = *instance;
+    node* head = *instance;
+    int CurrLen = getLen(*instance);
+    fwrite(&CurrLen, sizeof(int), 1, fp);
+    if(*instance == NULL)
+        return;
+    do
+    {
+        fwrite(&(curr->val), sizeof(request), 1, fp);
+        fwrite(&(curr->val.requestList.arrPtr[curr->val.requestList.front]),
+              sizeof(ArrT), curr->val.requestList.currSize, fp);
+        curr = curr->next;
+    }while(curr != head);
+    fclose(fp);
+}
+void LoadRequest(node** instance)
+{
+    destoryList(instance);PrintList(*instance);
+    char filename[]="Request List.bin";
+    FILE *fp;
+    fp = fopen(filename,"rb");
+    int RecordSize = 0;
+    fread(&RecordSize, sizeof(int), 1, fp);
+    for(int i = 0; i < RecordSize; ++i)
+    {
+        request temp;
+
+        fread(&(temp), sizeof(request), 1, fp);
+        temp.requestList.currSize -= temp.requestList.front;
+        temp.requestList.front = 0;
+        temp.requestList.maxSize=temp.requestList.currSize;
+        temp.requestList.arrPtr = initialiseArray(temp.requestList.maxSize, sizeof(ArrT));
+        fread(temp.requestList.arrPtr,
+              sizeof(ArrT), temp.requestList.currSize, fp);
+        pushBack(instance, temp);
+    }
+    fclose(fp);
+}
 #endif // WAREHOUSESYSTEM_H_INCLUDED

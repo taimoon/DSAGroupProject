@@ -19,9 +19,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="C Dynamic Array.h" />
-		<Unit filename="Cir_List.h" />
-		<Unit filename="Forward_List.h" />
+		<Unit filename="C Dynamic Array.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="Cir_List.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="Forward_List.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="Sort Algorithm.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
