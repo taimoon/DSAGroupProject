@@ -13,10 +13,10 @@
 #define STREET_MAX_LEN 32
 #define CITY_MAX_LEN 32
 #define STATE_MAX_LEN 32
-#define POSTCODE_MAX_LEN 11
+#define POSTCODE_MAX_LEN 16
 #define OUTBOUND 0
 #define INBOUND 1
-//This is the pythonic input
+//Defining pythonic input
 void input(char *prompt, char *format, void* target){
     printf(prompt);
     scanf(format, target);
@@ -32,11 +32,12 @@ typedef struct RequestRow{
     product self;
     unsigned int qty;
 }RequestRow;
+//RequestRow will be using the dynamic array
 typedef RequestRow ArrT;
 #include "C Dynamic Array.h"
-///Note that the array here is the array of RequestRow Datatype
+//Note that the array here is the array of RequestRow Datatype
 typedef struct address{
-    char detailedAddr[DETAILADDR_MAX_LEN];
+    char DetailAddr[DETAILADDR_MAX_LEN];
     char street[STREET_MAX_LEN];
     char city[CITY_MAX_LEN];
     char state[STATE_MAX_LEN];
@@ -51,9 +52,10 @@ typedef struct request{
     float totalPrice;
     address target;
 }request;
-//Define queue structure from circular list after including the circular list
+//rquest will be using the linked list
 typedef request T;
 #include "Cir_List.h"
+//Define queue structure from circular list after including the circular list
 void enqueue(node** queue, request instance)
 {
     pushBack(queue, instance);
@@ -70,6 +72,7 @@ void InputRequestList(array *CurrList);
 void PrintProduct(product product_info);
 void PrintRequest(request instance);
 void PrintAddress(address address_customer);
+void PrintRequestQueue(node *q);
 
 ///File Handling Module
 int GetRecordSize(char *filename, size_t elemSize);
@@ -129,7 +132,7 @@ request InputNewRequest()
 address InputAddressCustomer()
 {
     struct address address_customer;
-    input("Enter the detail address of the customer address: ", "%[^\n]", address_customer.detailedAddr);
+    input("Enter the detail address of the customer address: ", "%[^\n]", address_customer.DetailAddr);
     input("Enter the street of the customer address: ", "%[^\n]", address_customer.street);
     input("Enter the city of the customer address: ", "%[^\n]", address_customer.city);
     input("Enter the postcode of the customer address: ", "%[^\n]", address_customer.postcode);
@@ -140,6 +143,23 @@ int ProductBarcodeComp(const product  *a, const product *b)
 {
     return strcmp(a->barcode, b->barcode);
 }
+int ProductNameComp(const product *a, const product *b)
+{
+    return strcmp(a->name, b->name);
+}
+int ProductCategoryComp(const product *a, const product *b)
+{
+    return strcmp(a->category, b->category);
+}
+int ProductPriceComp(const product *a, const product *b)
+{
+    if(a->price==b->price)
+        return 0;
+    else if(a->price > b->price)
+        return 1;
+    else
+        return -1;
+}
 void InputRequestList(array *CurrList)
 {
     int UserInput = 1;
@@ -148,7 +168,7 @@ void InputRequestList(array *CurrList)
     int len = LoadProduct(&ProductList);
     while(UserInput)
     {
-        MergeSort(ProductList, len, sizeof(product), ProductBarcodeComp);
+        QuickSort(ProductList, len, sizeof(product), ProductBarcodeComp);
         system("CLS");
         PrintAllProduct(ProductList, len);
         input("Enter the barcode of product you wish to request: ", "%[^\n]s",&barcode);
@@ -165,6 +185,26 @@ void InputRequestList(array *CurrList)
         else
             printf("The barcode is not recorded in the system\n");
         input("Enter 1 if you wish to continue, or enter any key otherwise: ", "%d", &UserInput);
+    }
+}
+void PrintSortedProduct(int n)
+{
+    product *ProductList=NULL;
+    int CurrLen = LoadProduct(&ProductList);
+    switch(n)
+    {
+    case 1:
+        QuickSort(ProductList, CurrLen, sizeof(product), ProductBarcodeComp);
+        break;
+    case 2:
+        QuickSort(ProductList, CurrLen, sizeof(product), ProductNameComp);
+        break;
+    case 3:
+        QuickSort(ProductList, CurrLen, sizeof(product), ProductCategoryComp);
+        break;
+    case 4:
+        QuickSort(ProductList, CurrLen, sizeof(product), ProductPriceComp);
+        break;
     }
 }
 void PrintProduct(product product_info)
@@ -211,11 +251,23 @@ void PrintRequest(request instance)
 }
 void PrintAddress(address address_customer)
 {
-    printf("The address line 1: %s\n", address_customer.detailedAddr);
+    printf("The address line 1: %s\n", address_customer.DetailAddr);
     printf("Street: %s\n", address_customer.street);
     printf("City: %s\n", address_customer.city);
     printf("Postcode: %s\n", address_customer.postcode);
     printf("State: %s\n", address_customer.state);
+}
+void PrintRequestQueue(node *q)
+{
+    if(q == NULL)
+        return;
+    node *head = q;
+    do
+    {
+        PrintRequest(q->val);
+        q=q->next;
+        printf("\n");
+    }while(q != head);
 }
 void FileInit(char *filename)
 {
@@ -264,9 +316,9 @@ int LoadProduct(product **arr)
     *arr=NULL;
     if(CurrLen != 0)
     {
-        *arr=(product *)malloc(CurrLen*sizeof(product));
-        FileLoadSeq(filename, *arr, sizeof(product));
-    }
+            *arr=(product *)malloc(CurrLen*sizeof(product));
+            FileLoadSeq(filename, *arr, sizeof(product));
+        }
     return CurrLen;
 }
 void SaveProduct(product *arr, size_t length)
@@ -298,7 +350,7 @@ void SaveRequest(node** instance)
 }
 void LoadRequest(node** instance)
 {
-    destoryList(instance);PrintList(*instance);
+    destoryList(instance);
     char filename[]="Request List.bin";
     FILE *fp;
     fp = fopen(filename,"rb");

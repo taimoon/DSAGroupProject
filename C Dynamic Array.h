@@ -38,23 +38,18 @@ void constructDynamicArray(array *arr){
     }
 }
 //arr1 = arr2
-void copyArray(ArrT arr1[], ArrT arr2[], int len){
-    for(int i = 0; i < len; ++i)
-        arr1[i] = arr2[i];
-}
 void shrinkArray(array *arr){
     if(arr->arrPtr == NULL)
         return;
-    int currLen = getLenArr(*arr);
+    int currLen = getLen(*arr);
     if(currLen != 0 && currLen*2 < arr->maxSize){
         if(arr->maxSize/2 > 0){
-            ArrT *newArr = initialiseArray(arr->maxSize/2, sizeof(ArrT));
-            copyArray(newArr, &(arr->arrPtr[arr->front]), currLen);
+            for(int i = arr->front; i < arr->currSize; ++i)
+                arr->arrPtr[i-arr->front]=arr->arrPtr[i];
             arr->currSize = currLen-1;
             arr->front = 0;
             arr->maxSize /= 2;
-            free(arr->arrPtr);
-            arr->arrPtr = newArr;
+            arr->arrPtr = (ArrT *)realloc(arr->arrPtr, sizeof(ArrT)*arr->maxSize);
         }
     }else if(currLen == 0 && arr->arrPtr != NULL){
             free(arr->arrPtr);
@@ -62,20 +57,18 @@ void shrinkArray(array *arr){
     }
 }
 void growArray(array *arr){
-    int currLen = getLenArr(*arr);
+    int currLen = getLen(*arr);
     if(arr->maxSize == 0)
         constructDynamicArray(arr);
     else if (currLen+1 >= arr->maxSize){
-        ArrT *newArr = initialiseArray(arr->maxSize*2, sizeof(ArrT));
-        copyArray(newArr, &(arr->arrPtr[arr->front]), currLen);
+        for(int i = arr->front; i < arr->currSize; ++i)
+                arr->arrPtr[i-arr->front]=arr->arrPtr[i];
         arr->currSize = currLen-1;
         arr->front = 0;
         arr->maxSize *= 2;
-        free(arr->arrPtr);
-        arr->arrPtr = newArr;
+        arr->arrPtr = (ArrT *)realloc(arr->arrPtr, sizeof(ArrT)*arr->maxSize);
     }
 }
-
 
 ///end of dynamic array
 /**
@@ -110,5 +103,7 @@ ArrT arrayPopFront(array *q){
     shrinkArray(q);
     return front;
 }
-
+ArrT dequeueArr(array *q){
+    return arrayPopFront(q);
+}
 #endif // C_DYNAMIC_ARRAY_H_INCLUDED

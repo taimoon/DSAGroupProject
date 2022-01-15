@@ -15,8 +15,9 @@ node* getNode(node *li, int pos);
 node* getEndNode(node *li);///trivial for circular double linked list
 void pushFront(node **li, T val);
 void pushBack(node **li, T val);
-T popFront(node **li);//you may change the T to void so that it doesn't return anything
-T popBack(node **li);//you may change the T to void so that it doesn't return anything
+//you may change the T to void so that it doesn't return anything
+T popFront(node **li);
+T popBack(node **li);
 void insertion(node **li, int pos, T val);
 void insertionAfter(node **li, int pos, T val); //optional
 void deletion(node **li, int pos);
