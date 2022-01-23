@@ -41,7 +41,7 @@ void constructDynamicArray(array *arr){
 void shrinkArray(array *arr){
     if(arr->arrPtr == NULL)
         return;
-    int currLen = getLen(*arr);
+    int currLen = getLenArr(*arr);
     if(currLen != 0 && currLen*2 < arr->maxSize){
         if(arr->maxSize/2 > 0){
             for(int i = arr->front; i < arr->currSize; ++i)
@@ -57,7 +57,7 @@ void shrinkArray(array *arr){
     }
 }
 void growArray(array *arr){
-    int currLen = getLen(*arr);
+    int currLen = getLenArr(*arr);
     if(arr->maxSize == 0)
         constructDynamicArray(arr);
     else if (currLen+1 >= arr->maxSize){

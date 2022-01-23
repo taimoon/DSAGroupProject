@@ -66,7 +66,7 @@ request dequeue(node ** queue)
 }
 product RegisterNewProduct();
 int AppendRegisteredProduct();
-request InputNewRequest();
+request InputNewRequest(char direction);
 address InputAddressCustomer();
 void InputRequestList(array *CurrList);
 void PrintProduct(product product_info);
@@ -81,8 +81,8 @@ void FileLoadSeq(char *filename, void* seq, size_t elemSize);
 void FileSaveSeq(char *filename, int length, void *seq, size_t elemSize);
 void SaveProduct(product *arr, size_t length);
 int LoadProduct(product **arr);
-void LoadRequest(node** instance);
-void SaveRequest(node** instance);
+void LoadRequest(node** instance, char *filename);
+void SaveRequest(node** instance, char *filename);
 
 product RegisterNewProduct()
 {
@@ -117,14 +117,13 @@ int AppendRegisteredProduct()
     free(ProductList);
     return CurrLen;
 }
-request InputNewRequest()
+request InputNewRequest(char direction)
 {
     struct request newrequest;
     newrequest.requestList=array_init;
-    newrequest.direction = OUTBOUND;
+    newrequest.direction = direction;
     input("Enter the orderID of the request: ", "%u", &newrequest.orderID);
     input("Enter the receiver name of the request: ", "%[^\n]s", newrequest.receiver);
-    input("Enter the direction of request(0=Outbound/1=INBOUND): ", "%c", &newrequest.direction);
     input("Enter the date of request(DD/MM/YY): ", "%s", newrequest.requestDate);
     InputRequestList(&newrequest.requestList);
     return newrequest;
@@ -169,11 +168,9 @@ void InputRequestList(array *CurrList)
     while(UserInput)
     {
         QuickSort(ProductList, len, sizeof(product), ProductBarcodeComp);
-        system("CLS");
-        PrintAllProduct(ProductList, len);
+        PrintAllProductGiven(ProductList, len);
         input("Enter the barcode of product you wish to request: ", "%[^\n]s",&barcode);
         int idx= BinarySearch(barcode, ProductList, len, sizeof(product), ProductBarcodeComp);
-        system("CLS");
         if(idx!=-1)
         {
             RequestRow temp;
@@ -187,39 +184,70 @@ void InputRequestList(array *CurrList)
         input("Enter 1 if you wish to continue, or enter any key otherwise: ", "%d", &UserInput);
     }
 }
-void PrintSortedProduct(int n)
+void SortedProduct(product *ProductList, int len)
 {
-    product *ProductList=NULL;
-    int CurrLen = LoadProduct(&ProductList);
-    switch(n)
+    int UserInput = 0;
+    printf("\nView sorted product List based on\n"
+           "1)\t Barcode\n"
+           "2)\t Name\n"
+           "3)\t Category\n"
+           "4)\t Price\n");
+    input("", "%d", &UserInput);
+    switch(UserInput)
     {
     case 1:
-        QuickSort(ProductList, CurrLen, sizeof(product), ProductBarcodeComp);
+        QuickSort(ProductList, len, sizeof(product), ProductBarcodeComp);
         break;
     case 2:
-        QuickSort(ProductList, CurrLen, sizeof(product), ProductNameComp);
+        QuickSort(ProductList, len, sizeof(product), ProductNameComp);
         break;
     case 3:
-        QuickSort(ProductList, CurrLen, sizeof(product), ProductCategoryComp);
+        QuickSort(ProductList, len, sizeof(product), ProductCategoryComp);
         break;
     case 4:
-        QuickSort(ProductList, CurrLen, sizeof(product), ProductPriceComp);
+        QuickSort(ProductList, len, sizeof(product), ProductPriceComp);
         break;
     }
 }
 void PrintProduct(product product_info)
 {
-    printf("The barcode of the product: %s\n", product_info.barcode);
-    printf("The name of product: %s\n", product_info.name);
-    printf("The category of the product: %s\n", product_info.category);
-    printf("The price of the product: %.2f\n", product_info.price);
+    printf("Barcode: %s\n", product_info.barcode);
+    printf("Product: %s\n", product_info.name);
+    printf("Category: %s\n", product_info.category);
+    printf("Price: %.2f\n", product_info.price);
 }
-void PrintAllProduct(product arr[], size_t len)
+void PrintAllProductGiven(product arr[], size_t len)
 {
     for(size_t i = 0; i < len; ++i)
     {
         printf("%d\n", i);
         PrintProduct(arr[i]);
+        printf("\n");
+    }
+}
+void PrintAllProduct()
+{
+    product *ProductList=NULL;
+    int len = LoadProduct(&ProductList);
+    for(size_t i = 0; i < len; ++i)
+    {
+        printf("%d\n", i);
+        PrintProduct(ProductList[i]);
+        printf("\n");
+    }
+    free(ProductList);
+}
+void PrintProductRow(product product_info)
+{
+    printf("%s\t\t%s\t%s\t%.2f", product_info.barcode, product_info.name, product_info.category, product_info.price);
+}
+void PrintAllProductRow(product *ProductList, int len)
+{
+    printf("No\tBarcode\t\tProduct Name\t\tCategory\tPrice(RM)\n");
+    for(size_t i = 0; i < len; ++i)
+    {
+        printf("%d\t", i+1);
+        PrintProductRow(ProductList[i]);
         printf("\n");
     }
 }
@@ -269,15 +297,27 @@ void PrintRequestQueue(node *q)
         printf("\n");
     }while(q != head);
 }
+void EditProduct(product *ProductList, int *len)
+{
+    system("CLS");
+    int UserInput = 0;
+    int idx = 0;
+    SortedProduct(ProductList, *len);
+    PrintAllProductRow(ProductList, *len);
+    input("\nInput the number of the product:", "%d", &idx);
+    idx = idx-1;
+    PrintProduct(ProductList[idx]);
+    input("\ne)\t Edit"
+          "\nd)\t Delete", "%d", &UserInput);
+}
 void FileInit(char *filename)
 {
     FILE *fp;
     fp = fopen(filename, "rb");
     if(fp == 0)
     {
-        printf("Cannot open the file, then a new file is created : %s", filename);
+        printf("Cannot open the file, then a new file is created : %s\n", filename);
         fp = fopen(filename, "wb");
-        exit(0);
     }
     fclose(fp);
 }
@@ -327,9 +367,8 @@ void SaveProduct(product *arr, size_t length)
     FileInit(filename);
     FileSaveSeq(filename, length, arr, sizeof(product));
 }
-void SaveRequest(node** instance)
+void SaveRequest(node** instance, char *filename)
 {
-    char filename[]="Request List.bin";
     FileInit(filename);
     FILE *fp;
     fp = fopen(filename,"wb");
@@ -348,10 +387,9 @@ void SaveRequest(node** instance)
     }while(curr != head);
     fclose(fp);
 }
-void LoadRequest(node** instance)
+void LoadRequest(node** instance, char *filename)
 {
     destoryList(instance);
-    char filename[]="Request List.bin";
     FILE *fp;
     fp = fopen(filename,"rb");
     int RecordSize = 0;
