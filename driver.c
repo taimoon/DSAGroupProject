@@ -9,8 +9,6 @@ int main(void)
 {
     char InReqFileName[] ="Inbound Request List.bin";
     char OutReqFileName[] ="Outbound Request List.bin";
-    product *ProductList = NULL;
-    int CurrProdNum = LoadProduct(&ProductList);
     node* InRequestList = NULL;
     node* OutRequestList = NULL;
     LoadRequest(&InRequestList, InReqFileName);
@@ -28,6 +26,8 @@ int main(void)
                "6)\t Fulfil Request\n"
                "q)\t Quit\n"
                );
+        product *ProductList = NULL;
+        int CurrProdNum = LoadProduct(&ProductList);
         MenuSelInput=getchar();fflush(stdin);
         switch(MenuSelInput)
         {
@@ -50,7 +50,7 @@ int main(void)
             CurrProdNum=AppendRegisteredProduct();
             break;
         case '4':
-            EditProduct(ProductList, &CurrProdNum);
+            ProductModification(ProductList, &CurrProdNum);
             break;
         case '5':
             input("Enter the direction of request(0=Outbound/1=INBOUND): ", "%d", &MenuSelInput);
@@ -70,9 +70,15 @@ int main(void)
         case '6':
             input("Enter the direction of request(0=Outbound/1=INBOUND): ", "%d", &MenuSelInput);
             if(MenuSelInput==OUTBOUND)
+            {
                 PrintRequest(dequeue(&OutRequestList));
+                SaveRequest(&OutRequestList, OutReqFileName);
+            }
             else if(MenuSelInput==INBOUND)
+            {
                 PrintRequest(dequeue(&InRequestList));
+                SaveRequest(&InRequestList, InReqFileName);
+            }
             else
                 InvalidInputWarn();
             break;

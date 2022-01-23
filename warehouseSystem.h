@@ -93,6 +93,23 @@ product RegisterNewProduct()
     input("Enter the price of the product: ", "%f", &product_info.price);
     return product_info;
 };
+product InputEditedProduct(product instance)
+{
+    struct product product_info=instance;
+    input("Enter the barcode of the product: ", "%[^\n]s", product_info.barcode);
+    input("Enter the name of the product: ", "%[^\n]s", product_info.name);
+    input("Enter the category of the product: ", "%[^\n]s", product_info.category);
+    input("Enter the price of the product(enter -1 if you're not intended to change): ", "%f", &product_info.price);
+    if(product_info.barcode[0] != '\n')
+        strcpy(instance.barcode,product_info.barcode);
+    if(product_info.name[0] != '\n')
+        strcpy(instance.name,product_info.name);
+    if(product_info.category[0] != '\n')
+        strcpy(instance.category,product_info.category);
+    if(product_info.price > 0)
+        instance.price = product_info.price;
+    return instance;
+}
 int AppendRegisteredProduct()
 {
     char filename[]="Product List.bin";
@@ -131,11 +148,11 @@ request InputNewRequest(char direction)
 address InputAddressCustomer()
 {
     struct address address_customer;
-    input("Enter the detail address of the customer address: ", "%[^\n]", address_customer.DetailAddr);
-    input("Enter the street of the customer address: ", "%[^\n]", address_customer.street);
-    input("Enter the city of the customer address: ", "%[^\n]", address_customer.city);
-    input("Enter the postcode of the customer address: ", "%[^\n]", address_customer.postcode);
-    input("Enter the state of the customer address: ", "%[^\n]", address_customer.state);
+    input("Enter the detail address of the customer address: ", "%[^\n]s", address_customer.DetailAddr);
+    input("Enter the street of the customer address: ", "%[^\n]s", address_customer.street);
+    input("Enter the city of the customer address: ", "%[^\n]s", address_customer.city);
+    input("Enter the postcode of the customer address: ", "%[^\n]s", address_customer.postcode);
+    input("Enter the state of the customer address: ", "%[^\n]s", address_customer.state);
     return address_customer;
 }
 int ProductBarcodeComp(const product  *a, const product *b)
@@ -192,7 +209,7 @@ void SortedProduct(product *ProductList, int len)
            "2)\t Name\n"
            "3)\t Category\n"
            "4)\t Price\n");
-    input("", "%d", &UserInput);
+    input("Enter the number: ", "%d", &UserInput);
     switch(UserInput)
     {
     case 1:
@@ -297,10 +314,10 @@ void PrintRequestQueue(node *q)
         printf("\n");
     }while(q != head);
 }
-void EditProduct(product *ProductList, int *len)
+void ProductModification(product *ProductList, int *len)
 {
     system("CLS");
-    int UserInput = 0;
+    char UserInput = 0;
     int idx = 0;
     SortedProduct(ProductList, *len);
     PrintAllProductRow(ProductList, *len);
@@ -308,7 +325,22 @@ void EditProduct(product *ProductList, int *len)
     idx = idx-1;
     PrintProduct(ProductList[idx]);
     input("\ne)\t Edit"
-          "\nd)\t Delete", "%d", &UserInput);
+          "\nd)\t Delete"
+          "\nq)\t Quit\n", "%c", &UserInput);
+    switch(UserInput)
+    {
+    case 'e':
+        printf("Enter the change if you wish, otherwise left it blank\n");
+        ProductList[idx]=InputEditedProduct(ProductList[idx]);
+        SaveProduct(ProductList, *len);
+        break;
+    case 'd':
+        for(int i = idx; i < len;++i)
+            ProductList[idx]=ProductList[idx+1];
+        *len -= 1;
+        SaveProduct(ProductList, *len);
+        break;
+    }
 }
 void FileInit(char *filename)
 {

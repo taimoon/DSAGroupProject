@@ -97,6 +97,18 @@ ArrT popBackArr(array *stack){
 void enqueueArr(ArrT data, array *q){
     pushBackArr(data, q);
 }
+void DeleteArr(array *arr, int pos)//not yet tested
+{
+    if(pos > 0 && pos < getLen(*arr))
+    {
+        for(int i = pos; i < getLen(*arr)-1; ++i)
+        {
+            arr->arrPtr[pos]=arr->arrPtr[pos+1];
+        }
+    }
+    else
+        exit(pos);
+}
 ArrT arrayPopFront(array *q){
     ArrT front = q->arrPtr[q->front];
     q->front += 1;
