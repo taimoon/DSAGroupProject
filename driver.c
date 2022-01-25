@@ -12,10 +12,13 @@ int main(void)
     node* InRequestList = NULL;
     node* OutRequestList = NULL;
     LoadRequest(&InRequestList, InReqFileName);
-    //LoadRequest(&OutRequestList, OutReqFileName);
+    LoadRequest(&OutRequestList, OutReqFileName);
+    product *ProductList = NULL;
+    int CurrProdNum = LoadProduct(&ProductList);
     char MenuSelInput = 1;
     while(MenuSelInput != 'q')
     {
+
         printf("WAREHOUSE SYSTEM MANAGEMENT\n"
                "Enter the number to nagvigate\n");
         printf("1)\t View Product List\n"
@@ -26,8 +29,6 @@ int main(void)
                "6)\t Fulfil Request\n"
                "q)\t Quit\n"
                );
-        product *ProductList = NULL;
-        int CurrProdNum = LoadProduct(&ProductList);
         MenuSelInput=getchar();fflush(stdin);
         switch(MenuSelInput)
         {
@@ -83,5 +84,7 @@ int main(void)
                 InvalidInputWarn();
             break;
         }
+        free(ProductList);
+        CurrProdNum = LoadProduct(&ProductList);
     }
 }

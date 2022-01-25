@@ -69,6 +69,7 @@ int AppendRegisteredProduct();
 request InputNewRequest(char direction);
 address InputAddressCustomer();
 void InputRequestList(array *CurrList);
+double CalTotalPrice(array *CurrList);
 void PrintProduct(product product_info);
 void PrintRequest(request instance);
 void PrintAddress(address address_customer);
@@ -143,6 +144,7 @@ request InputNewRequest(char direction)
     input("Enter the receiver name of the request: ", "%[^\n]s", newrequest.receiver);
     input("Enter the date of request(DD/MM/YY): ", "%s", newrequest.requestDate);
     InputRequestList(&newrequest.requestList);
+    newrequest.totalPrice = CalTotalPrice(&newrequest.requestList);
     return newrequest;
 };
 address InputAddressCustomer()
@@ -185,7 +187,7 @@ void InputRequestList(array *CurrList)
     while(UserInput)
     {
         QuickSort(ProductList, len, sizeof(product), ProductBarcodeComp);
-        PrintAllProductGiven(ProductList, len);
+        PrintAllProductRow(ProductList, len);
         input("Enter the barcode of product you wish to request: ", "%[^\n]s",&barcode);
         int idx= BinarySearch(barcode, ProductList, len, sizeof(product), ProductBarcodeComp);
         if(idx!=-1)
@@ -200,6 +202,27 @@ void InputRequestList(array *CurrList)
             printf("The barcode is not recorded in the system\n");
         input("Enter 1 if you wish to continue, or enter any key otherwise: ", "%d", &UserInput);
     }
+}
+double CalTotalPrice(array *CurrList)
+{
+    double sum = 0;
+    for(int i = CurrList->front; i < CurrList->currSize;++i)
+    {
+        sum += CurrList->arrPtr[i].qty*CurrList->arrPtr[i].self.price;
+    }
+    return sum;
+}
+void UpdateRequestList(node **li)
+{
+    if(*li == NULL)
+        return;
+    node *head = *li;
+    node *curr = *li;
+    do
+    {
+        curr->val.totalPrice = CalTotalPrice(&(curr->val.requestList));
+        curr = curr->next;
+    }while(curr != head);
 }
 void SortedProduct(product *ProductList, int len)
 {
@@ -270,9 +293,11 @@ void PrintAllProductRow(product *ProductList, int len)
 }
 void PrintRequestRow(array instance)
 {
-    for(int i = instance.front; i < instance.currSize; ++i)
+    int j = 1;
+    for(int i = instance.front; i < instance.currSize; ++i, ++j)
     {
-        printf("%s %s %.2f %d\n",
+        printf("%d\t%s\t%s\t%.2f\t%d\n",
+               j,
                instance.arrPtr[i].self.barcode,
                instance.arrPtr[i].self.name,
                instance.arrPtr[i].self.price,
@@ -290,8 +315,9 @@ void PrintRequest(request instance)
     else
         printf("INBOUND\n");
     printf("The date of request: %s\n", instance.requestDate);
-    printf("Product\tName\tPrice\tQty\n");
+    printf("No\tProduct\tName\tPrice\tQty\n");
     PrintRequestRow(instance.requestList);
+    printf("Total Price: RM %.2f\n", instance.totalPrice);
 
 }
 void PrintAddress(address address_customer)
@@ -306,9 +332,12 @@ void PrintRequestQueue(node *q)
 {
     if(q == NULL)
         return;
+    int idx = 0;
     node *head = q;
     do
     {
+        ++idx;
+        printf("\n%d\n", idx);
         PrintRequest(q->val);
         q=q->next;
         printf("\n");

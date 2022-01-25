@@ -97,11 +97,10 @@ ArrT popBackArr(array *stack){
 void enqueueArr(ArrT data, array *q){
     pushBackArr(data, q);
 }
-void DeleteArr(array *arr, int pos)//not yet tested
-{
+void DeleteArr(array *arr, int pos){//not yet tested
     if(pos > 0 && pos < getLen(*arr))
     {
-        for(int i = pos; i < getLen(*arr)-1; ++i)
+        for(int i = pos; i < getLen(*arr); ++i)
         {
             arr->arrPtr[pos]=arr->arrPtr[pos+1];
         }
