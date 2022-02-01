@@ -185,7 +185,7 @@ void InputRequestList(array *CurrList)
     char barcode[BARCODE_MAX_LEN];
     product *ProductList = NULL;
     int len = LoadProduct(&ProductList);
-    while(UserInput)
+    while(UserInput == 1)
     {
         QuickSort(ProductList, len, sizeof(product), ProductBarcodeComp);
         PrintAllProductRow(ProductList, len);
@@ -201,7 +201,7 @@ void InputRequestList(array *CurrList)
         }
         else
             printf("The barcode is not recorded in the system\n");
-        input("Enter 1 if you wish to continue, or enter any key otherwise: ", "%d", &UserInput);
+        input("Enter 1 if you wish to continue, or enter 0 to quit: ", "%d", &UserInput);
     }
 }
 double CalTotalPrice(array *CurrList)
