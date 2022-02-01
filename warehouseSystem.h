@@ -74,6 +74,7 @@ void PrintProduct(product product_info);
 void PrintRequest(request instance);
 void PrintAddress(address address_customer);
 void PrintRequestQueue(node *q);
+void PrintAllProductRow(product *ProductList, int len);
 
 ///File Handling Module
 int GetRecordSize(char *filename, size_t elemSize);
@@ -157,23 +158,23 @@ address InputAddressCustomer()
     input("Enter the state of the customer address: ", "%[^\n]s", address_customer.state);
     return address_customer;
 }
-int ProductBarcodeComp(const product  *a, const product *b)
+int ProductBarcodeComp(const void*  a, const void* b)
 {
-    return strcmp(a->barcode, b->barcode);
+    return strcmp((*(product *)a).barcode, (*(product *)b).barcode);
 }
-int ProductNameComp(const product *a, const product *b)
+int ProductNameComp(const void*  a, const void* b)
 {
-    return strcmp(a->name, b->name);
+    return strcmp((*(product *)a).name, (*(product *)b).name);
 }
-int ProductCategoryComp(const product *a, const product *b)
+int ProductCategoryComp(const void*  a, const void* b)
 {
-    return strcmp(a->category, b->category);
+    return strcmp((*(product *)a).category, (*(product *)b).category);
 }
-int ProductPriceComp(const product *a, const product *b)
+int ProductPriceComp(const void*  a, const void* b)
 {
-    if(a->price==b->price)
+    if((*(product *)a).price==(*(product *)b).price)
         return 0;
-    else if(a->price > b->price)
+    else if((*(product *)a).price > (*(product *)b).price)
         return 1;
     else
         return -1;
@@ -364,7 +365,7 @@ void ProductModification(product *ProductList, int *len)
         SaveProduct(ProductList, *len);
         break;
     case 'd':
-        for(int i = idx; i < len;++i)
+        for(int i = idx; i < *len;++i)
             ProductList[idx]=ProductList[idx+1];
         *len -= 1;
         SaveProduct(ProductList, *len);

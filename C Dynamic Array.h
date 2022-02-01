@@ -98,9 +98,9 @@ void enqueueArr(ArrT data, array *q){
     pushBackArr(data, q);
 }
 void DeleteArr(array *arr, int pos){//not yet tested
-    if(pos > 0 && pos < getLen(*arr))
+    if(pos > 0 && pos < getLenArr(*arr))
     {
-        for(int i = pos; i < getLen(*arr); ++i)
+        for(int i = pos; i < getLenArr(*arr); ++i)
         {
             arr->arrPtr[pos]=arr->arrPtr[pos+1];
         }
