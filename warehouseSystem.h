@@ -125,12 +125,12 @@ int AppendRegisteredProduct()
         len = len*2;
     ProductList=(product *)realloc(ProductList, len*sizeof(product));
     int UserInput = 1;
-    input("Enter 1 to continue input, or any key to stop", "%d", &UserInput);
+    input("Enter 1 to continue input, or 0 to stop", "%d", &UserInput);
     while(UserInput == 1 && CurrLen < len*2)
     {
         ProductList[CurrLen] = RegisterNewProduct();
         ++CurrLen;
-        input("Enter 1 to continue input, or any key to stop", "%d", &UserInput);
+        input("Enter 1 to continue input, or 0 key to stop", "%d", &UserInput);
     }
     SaveProduct(ProductList, CurrLen);
     free(ProductList);
