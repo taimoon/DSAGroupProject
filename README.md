@@ -1,6 +1,6 @@
 # DSAGroupProject
-Group 11 \
-Group members:
+## Group 11
+### Group members:
 - LEONG TENG MAN
 - TAN WEI QING
 - NG JIE HAO
