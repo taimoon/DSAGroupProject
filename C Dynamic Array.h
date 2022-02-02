@@ -13,6 +13,13 @@ struct array{
 };
 typedef struct array array;
 array array_init = {NULL, 0, 0, 0};
+int getLenArr(array arr);
+ArrT* getElem(array arr, int pos);
+void pushBackArr(ArrT data, array *stack);
+ArrT popBackArr(array *stack);
+ArrT arrayPopFront(array *q);
+ArrT dequeueArr(array *q);
+
 int getLenArr(array arr){
     if(arr.arrPtr != NULL)
         return arr.currSize-arr.front+1;
@@ -96,17 +103,6 @@ ArrT popBackArr(array *stack){
 }
 void enqueueArr(ArrT data, array *q){
     pushBackArr(data, q);
-}
-void DeleteArr(array *arr, int pos){//not yet tested
-    if(pos > 0 && pos < getLenArr(*arr))
-    {
-        for(int i = pos; i < getLenArr(*arr); ++i)
-        {
-            arr->arrPtr[pos]=arr->arrPtr[pos+1];
-        }
-    }
-    else
-        exit(pos);
 }
 ArrT arrayPopFront(array *q){
     ArrT front = q->arrPtr[q->front];

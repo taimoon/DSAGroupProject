@@ -292,7 +292,7 @@ void PrintAllProductRow(product *ProductList, int len)
         printf("\n");
     }
 }
-void PrintRequestRow(array instance)
+void PrintRequestListRow(array instance)
 {
     int j = 1;
     for(int i = instance.front; i < instance.currSize; ++i, ++j)
@@ -317,7 +317,7 @@ void PrintRequest(request instance)
         printf("INBOUND\n");
     printf("The date of request: %s\n", instance.requestDate);
     printf("No\tProduct\tName\tPrice\tQty\n");
-    PrintRequestRow(instance.requestList);
+    PrintRequestListRow(instance.requestList);
     printf("Total Price: RM %.2f\n", instance.totalPrice);
 
 }
@@ -418,9 +418,9 @@ int LoadProduct(product **arr)
     *arr=NULL;
     if(CurrLen != 0)
     {
-            *arr=(product *)malloc(CurrLen*sizeof(product));
-            FileLoadSeq(filename, *arr, sizeof(product));
-        }
+        *arr=(product *)malloc(CurrLen*sizeof(product));
+        FileLoadSeq(filename, *arr, sizeof(product));
+    }
     return CurrLen;
 }
 void SaveProduct(product *arr, size_t length)

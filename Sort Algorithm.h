@@ -3,16 +3,22 @@
 
 int BinarySearch(const void* key, const void *arr,
                   size_t len, size_t elemSize,
-                  int(*comparator)(const void*, const void*))
+                  int(*cmp)(const void*, const void*));
+void QuickSort(void* arr, size_t len, size_t elemSize, int (*cmp)(const void*, const void*));
+
+
+int BinarySearch(const void* key, const void *arr,
+                  size_t len, size_t elemSize,
+                  int(*cmp)(const void*, const void*))
 {
     int low = 0;
     int high = len-1;
     int mid = (high+low)/2;
     do
     {
-        if(comparator(arr+mid*elemSize, key) < 0)
+        if(cmp(arr+mid*elemSize, key) < 0)
             low = mid+1;
-        else if(comparator(arr+mid*elemSize, key) > 0)
+        else if(cmp(arr+mid*elemSize, key) > 0)
             high = mid-1;
         else
             return mid;
