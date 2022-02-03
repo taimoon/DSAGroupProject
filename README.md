@@ -17,3 +17,5 @@
 Note that backup and retreive only work on window pc.
 # Note for CodeBlock user
 You may click the file warehousemanagement.cbp to access the project.
+# Problem
+- using 2018 gnu compiler might result the exe crash. Solution: use other version. 
