@@ -15,3 +15,5 @@
 - backup.exe : back up the product list, inbound request list, outboud request list
 - retrieve.exe : retrieve the backup data
 Note that backup and retreive only work on window pc.
+# Note for CodeBlock user
+You may click the file warehousemanagement.cbp to access the project.
