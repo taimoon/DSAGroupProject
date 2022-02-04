@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1643071539 source:c:\users\leong teng man\documents\github\dsagroupproject\driver.c
+	<stdio.h>
+	"warehouseSystem.h"
+
+1643071894 c:\users\leong teng man\documents\github\dsagroupproject\warehousesystem.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Sort Algorithm.h"
+	"C Dynamic Array.h"
+	"Cir_List.h"
+
+1643001158 c:\users\leong teng man\documents\github\dsagroupproject\c dynamic array.h
+	<stdio.h>
+	<stdlib.h>
+
+1642241041 c:\users\leong teng man\documents\github\dsagroupproject\sort algorithm.h
+
+1642214960 c:\users\leong teng man\documents\github\dsagroupproject\cir_list.h
+	<stdlib.h>
+	<stdio.h>
+
