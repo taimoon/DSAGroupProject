@@ -4,7 +4,7 @@
 1. We could use makefile software, rather using custom build file
 
 ## Introduction
-It is a group project for the course data structure and algorithm using C. To students, the project is aimed to practice using apporiate data structure and algorithm in solving computational problem. This project is about implementing inventory management app which is a subset of the warehouse management. We restricted the app to record the inbound and outbound requests. A request record dates, and possibly contain many items with quantities. It is nature choice to use queue to record these requests assuming the business rule is first come first served; first in first out.
+It is a group project for the course data structure and algorithm using C. In this project, we implement inventory management app which is a subset of the warehouse management. We restricted the app to record the inbound and outbound requests. A request record dates, and possibly contain many items each with quantities. It is nature choice to use queue to record these requests assuming the business rule is first come first served; first in first out.
 
 We have implemented the circular linked list, singly linked list, C-styled sort and dynamic array (C++ vector).
 
